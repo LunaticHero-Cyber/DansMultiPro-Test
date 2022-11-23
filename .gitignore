@@ -30,7 +30,10 @@ build/
 local.properties
 *.iml
 *.hprof
+<<<<<<< HEAD
 .cxx/
+=======
+>>>>>>> a7f6638a93e94c96434e84af7428e1cdc8eedaa5
 
 # node.js
 #
@@ -51,14 +54,25 @@ buck-out/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/
 
+<<<<<<< HEAD
 **/fastlane/report.xml
 **/fastlane/Preview.html
 **/fastlane/screenshots
 **/fastlane/test_output
+=======
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+>>>>>>> a7f6638a93e94c96434e84af7428e1cdc8eedaa5
 
 # Bundle artifact
 *.jsbundle
 
+<<<<<<< HEAD
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+=======
+# CocoaPods
+/ios/Pods/
+>>>>>>> a7f6638a93e94c96434e84af7428e1cdc8eedaa5
