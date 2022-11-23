@@ -1,39 +1,16 @@
 import React from 'react';
-import {View, ViewProps} from 'react-native';
+import {View} from 'react-native';
 
-import {COLORS} from '../../constants';
-
-const TheBoxSpace = ({color, size = 'padding', ...rest}: BoxSpaceProps) => {
-  return (
-    <View
-      // backgroundColor={__DEV__ ? color : undefined}
-      width={SIZES[size]}
-      height={SIZES[size]}
-      {...rest}
-    />
-  );
-};
+import {SIZES} from 'constants/sizes';
 
 const BoxSpace = {
-  A: (props: BoxSpaceProps) => <TheBoxSpace color="PINK" {...props} />,
-  B: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="TURQOISE" size="content" {...props} />
-  ),
-  C: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="YELLOW" size="contentLarge" {...props} />
-  ),
-  D: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="PINK75" size="container" {...props} />
-  ),
-  E: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="TURQOISE75" size="box" {...props} />
-  ),
-  F: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="YELLOW75" size="header" {...props} />
-  ),
-  G: (props: BoxSpaceProps) => (
-    <TheBoxSpace color="BLACK100" size="pinSpacing" {...props} />
-  ),
+  A: () => <View style={{width: SIZES.small, height: SIZES.small}} />,
+  B: () => <View style={{width: SIZES.medium, height: SIZES.medium}} />,
+  C: () => <View style={{width: SIZES.large, height: SIZES.large}} />,
+  D: () => <View style={{width: SIZES.container, height: SIZES.container}} />,
+  E: () => <View style={{width: SIZES.box, height: SIZES.box}} />,
+  F: () => <View style={{width: SIZES.box2, height: SIZES.box2}} />,
+  G: () => <View style={{width: SIZES.header, height: SIZES.header}} />,
 };
 
 export default BoxSpace;

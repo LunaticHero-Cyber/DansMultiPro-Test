@@ -1,9 +1,9 @@
 import React from 'react';
-import {ViewProps} from 'react-native';
+import {View, ViewProps} from 'react-native';
 
 export const Wrapper = (props: ViewProps) => {
-  const {children} = props;
-  return <view style={{flex: 1, flexDirection: 'column'}}>{children}</view>;
+  const {children, style} = props;
+  return <View style={[{flexDirection: 'row'}, style]}>{children}</View>;
 };
 
 export default Wrapper;

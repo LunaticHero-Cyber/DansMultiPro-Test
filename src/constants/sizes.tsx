@@ -1,0 +1,16 @@
+export enum SIZES {
+  outline = 1,
+  radius = 6,
+  radiusRound = 50,
+  miniPadding = 3,
+  extraSmall = 8,
+  small = 10,
+  medium = 12,
+  large = 16,
+  extraLarge = 24,
+  container = 32,
+  box = 48,
+  box2 = 56,
+  header = 64,
+  pinSpacing = 80,
+}

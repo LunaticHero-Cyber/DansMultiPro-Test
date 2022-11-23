@@ -1,8 +1,9 @@
+import {SIZES} from 'constants/sizes';
 import React, {ReactNode} from 'react';
-import {Text} from 'react-native';
+import {Text, View} from 'react-native';
 
-import {Wrapper} from '@components/Common';
-import {COLORS} from '@constants';
+import {Wrapper} from '../../components/Common';
+import {COLORS} from '../../constants';
 
 type Props = {
   children?: ReactNode;
@@ -16,14 +17,21 @@ export const Header: React.FC<Props> = props => {
   const {title, RenderAccessoryLeft, RenderAccessoryRight, children} = props;
 
   return (
-    <Wrapper style={{backgroundColor: COLORS.BLACK20}}>
-      <view style={{flex: 1}}>
+    <Wrapper
+      style={{
+        backgroundColor: COLORS.BLACK20,
+        alignItems: 'center',
+        padding: SIZES.small,
+      }}>
+      <View style={{flex: 1, alignItems: 'flex-start'}}>
         {RenderAccessoryLeft ? <RenderAccessoryLeft /> : <></>}
-      </view>
-      <view style={{flex: 1}}>{children || <Text>{title}</Text>}</view>
-      <view style={{flex: 1}}>
+      </View>
+      <View style={{flex: 1, alignItems: 'center'}}>
+        {children || <Text>{title}</Text>}
+      </View>
+      <View style={{flex: 1, alignItems: 'flex-end'}}>
         {RenderAccessoryRight ? <RenderAccessoryRight /> : <></>}
-      </view>
+      </View>
     </Wrapper>
   );
 };

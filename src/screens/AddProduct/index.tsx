@@ -2,13 +2,14 @@ import React from 'react';
 
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import {Header, Container} from '../../components/Common';
+import {Header, Container, BoxSpace} from '../../components/Common';
 import {StackParamList} from '@navigators/Root';
 import {
   StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
+  View,
   ViewStyle,
 } from 'react-native';
 import {COLORS} from 'constants/colors';
@@ -54,6 +55,7 @@ const AddProduct = ({
   return (
     <Container>
       <Header title="Add Product" RenderAccessoryLeft={BackButton} />
+      <View style={{backgroundColor: 'red', flex: 1}} />
     </Container>
   );
 };
