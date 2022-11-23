@@ -11,15 +11,15 @@ import React from 'react';
 import {StatusBar, useColorScheme} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import RootNavigator from './src/navigators/Root';
+import {COLORS} from './src/constants';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: COLORS.BLACK20,
   };
 
   return (
