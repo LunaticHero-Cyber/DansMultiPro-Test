@@ -1,3 +1,3 @@
-const BASE_URL = 'https://crudcrud.com/api/66711618dfed47f7be7452856b74e0e2';
+const BASE_URL = 'https://crudcrud.com/api/3a65529bc4f94363a76e947ffa1ee11d';
 
 export const HOST_PRODUCT_URL = `${BASE_URL}/product`;

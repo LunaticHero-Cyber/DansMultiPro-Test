@@ -13,6 +13,7 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {ProductInterface} from '@appTypes/product.type';
 import {StackParamList} from '@navigators/Root';
@@ -20,6 +21,8 @@ import {Header, Container, BoxSpace, Wrapper} from 'components/Common';
 import {ProductCard} from 'components/Card';
 import {COLORS, SIZES} from 'constants';
 import {fetchProductList} from 'services/get/fetchProductList';
+import {initializeProductList} from 'reducer/actions';
+import {addProductList, emptyProductList} from 'reducer/reducers';
 
 type OrderRequestDetailScreenProp = StackNavigationProp<
   StackParamList,
@@ -82,15 +85,15 @@ const styles = StyleSheet.create<HomeStyleInterface>({
 });
 
 const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
+  const responseProductList = useSelector(state => state.productList);
+  const dispatch = useDispatch();
+
   const [searchInput, setSearchInput] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [errorResponse, setErrorResponse] = useState<any>();
 
-  const [responseProductList, setResponseProductList] = useState<
-    Array<ProductInterface>
-  >([]);
   const [filteredProductList, setFilteredProductList] = useState<
     Array<ProductInterface>
   >([]);
@@ -148,7 +151,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
       currentPage !== totalPage
         ? numberOfProductLimit * page
         : filteredProductList?.length;
-    const shownProduct = filteredProductList.slice(
+    const shownProduct = filteredProductList?.slice(
       firstIndexOfThePage,
       lastIndexOfThePage,
     );
@@ -158,7 +161,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const handleFetchingProductList = async () => {
     try {
       const products = await fetchProductList();
-      setResponseProductList(products);
+      dispatch(addProductList(products));
     } catch (error) {
       setIsError(true);
       setErrorResponse(error);
@@ -261,7 +264,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
 
   useEffect(() => {
     if (searchInput) {
-      const filteredProducts = responseProductList.filter(product =>
+      const filteredProducts = responseProductList?.filter(product =>
         product.name.toLowerCase().includes(searchInput.toLowerCase()),
       );
       setCurrentPage(1);
@@ -284,6 +287,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
 
   useFocusEffect(
     useCallback(() => {
+      dispatch(emptyProductList());
       handleFetchingProductList();
     }, []),
   );

@@ -11,9 +11,11 @@ import React from 'react';
 import {StatusBar, useColorScheme} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'react-redux';
 
 import RootNavigator from './src/navigators/Root';
 import {COLORS} from './src/constants';
+import {Store} from './src/reducer/store';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -28,9 +30,11 @@ const App = () => {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
+      <Provider store={Store}>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </Provider>
     </>
   );
 };
