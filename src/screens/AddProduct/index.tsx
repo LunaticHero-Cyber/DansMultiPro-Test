@@ -137,7 +137,7 @@ const AddProduct = ({
       width: parseInt(width, 10),
       length: parseInt(length, 10),
       height: parseInt(height, 10),
-      image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+      image: image,
       harga: parseInt(price, 10),
     };
 
