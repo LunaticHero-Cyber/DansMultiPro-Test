@@ -109,7 +109,7 @@ const AddProduct = ({
   const [image, setImage] = useState('');
   const [price, setPrice] = useState('');
 
-  const onPressAddProductButton = () => {
+  const onBackButton = () => {
     navigation.goBack();
   };
 
@@ -182,7 +182,7 @@ const AddProduct = ({
 
   const BackButton = () => (
     <TouchableOpacity
-      onPress={onPressAddProductButton}
+      onPress={onBackButton}
       style={[styles.button, styles.activeButton]}>
       <Text style={styles.backButtonText}>Back</Text>
     </TouchableOpacity>

@@ -231,10 +231,11 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentScrollContainer}>
           {renderedProductList?.map(product => (
-            <>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ProductDetail', {product})}>
               <ProductCard key={product.name} product={product} />
               <BoxSpace.B />
-            </>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       );

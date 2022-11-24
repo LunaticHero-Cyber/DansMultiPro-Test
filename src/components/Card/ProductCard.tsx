@@ -1,5 +1,13 @@
 import React from 'react';
-import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  Image,
+  ImageStyle,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import {ProductInterface} from 'appTypes/product.type';
 import {SIZES} from 'constants/sizes';
@@ -12,6 +20,7 @@ type ProductCardStyleInterface = {
   categoryNameText: TextStyle;
   descriptionText: TextStyle;
   priceText: TextStyle;
+  productImage: ImageStyle;
 };
 
 const styles = StyleSheet.create<ProductCardStyleInterface>({
@@ -34,12 +43,24 @@ const styles = StyleSheet.create<ProductCardStyleInterface>({
     fontSize: SIZES.large,
     color: COLORS.BLACK50,
   },
+  productImage: {
+    alignSelf: 'center',
+    width: SIZES.pinSpacing,
+    height: SIZES.pinSpacing,
+  },
 });
 
 const ProductCard = ({product}: {product: ProductInterface}) => {
-  const {name, categoryName, description, harga} = product;
+  const {name, categoryName, description, harga, image} = product;
   return (
     <Wrapper style={styles.card}>
+      <Image
+        style={styles.productImage}
+        source={{
+          uri: image,
+        }}
+      />
+      <BoxSpace.C />
       <View style={{flex: 1}}>
         <Text style={styles.nameText}>{name}</Text>
         <BoxSpace.A />
