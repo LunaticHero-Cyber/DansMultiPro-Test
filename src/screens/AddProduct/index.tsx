@@ -124,8 +124,8 @@ const AddProduct = ({
     price;
 
   const onPressSubmitFormButton = () => {
-    //TODO: I think categoryId and id in general should be better handled in the BE in API Contract for now it will be random
-    //In this case I will mkae categoryId as random, however the id itself is "Omit" from the ProductInterface as it's body JSON
+    //TODO: I think categoryId and id in general should be better handled in the BE in API Contract for now it will be "random"
+    //In this case I will make categoryId as "random", however the id itself is "Omit" from the ProductInterface as it's body JSON
     const categoryId = new Date().valueOf();
     const newProduct = {
       CategoryId: categoryId,
