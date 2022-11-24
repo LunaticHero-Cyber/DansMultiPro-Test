@@ -8,6 +8,7 @@ export const fetchProductList = async (): Promise<Array<ProductInterface>> => {
     const response = await axios.get<Array<ProductInterface>>(HOST_PRODUCT_URL);
     return response.data;
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };

@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
+  Button,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,7 +15,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import {ProductInterface} from '@appTypes/product.type';
 import {StackParamList} from '@navigators/Root';
-import {Header, Container, BoxSpace} from 'components/Common';
+import {Header, Container, BoxSpace, Wrapper} from 'components/Common';
 import {ProductCard} from 'components/Card';
 import {COLORS, SIZES} from 'constants';
 import {fetchProductList} from 'services/get/fetchProductList';
@@ -28,6 +29,8 @@ type OrderRequestDetailScreenProp = StackNavigationProp<
 type HomeStyleInterface = {
   addProductButton: ViewStyle;
   inputContainer: ViewStyle;
+  pageHandlerContainer: ViewStyle;
+  emptyContainer: ViewStyle;
   contentScrollContainer: ViewStyle;
   scrollContainer: ViewStyle;
   input: ViewStyle;
@@ -44,6 +47,14 @@ const styles = StyleSheet.create<HomeStyleInterface>({
   },
   inputContainer: {
     paddingHorizontal: SIZES.small,
+  },
+  pageHandlerContainer: {
+    paddingHorizontal: SIZES.small,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentScrollContainer: {
     padding: SIZES.small,
@@ -75,37 +86,377 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const [responseProductList, setResponseProductList] = useState<
     Array<ProductInterface>
   >([]);
-  const [productList, setProductList] = useState<Array<ProductInterface>>([]);
+  const [filteredProductList, setFilteredProductList] = useState<
+    Array<ProductInterface>
+  >([]);
+  const [renderedProductList, setRenderedProductList] = useState<
+    Array<ProductInterface>
+  >([]);
+
+  const totalNumberOfProducts = responseProductList?.length;
+  const numberOfProductLimit = 10;
+  const productListHasRemainder = totalNumberOfProducts % numberOfProductLimit;
+
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const onPressAddProductButton = () => {
     addProduct({
       CategoryId: 14,
-      categoryName: 'Cemilan4',
+      categoryName: 'Cemilan5',
       sku: 'MHZVTK',
-      name: 'Lays',
+      name: 'Delifer',
       description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
       weight: 500,
       width: 5,
       length: 5,
       height: 5,
       image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
-      harga: 30000,
+      harga: 40000,
     });
     // navigation.navigate('AddProduct');
+  };
+
+  const goToNextPage = () => {
+    if (currentPage + 1 > totalPage) {
+      return;
+    }
+
+    setCurrentPage(currentPage + 1);
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage - 1 < 1) {
+      return;
+    }
+
+    setCurrentPage(currentPage - 1);
   };
 
   const handleSearchInputChanged = (text: string) => {
     setSearchInput(text);
   };
 
+  const handlePageTotal = (numberOfProducts: number) => {
+    setTotalPage(
+      Math.floor(numberOfProducts / numberOfProductLimit) +
+        (productListHasRemainder ? 1 : 0),
+    );
+  };
+
+  const handlePageProducts = (page: number) => {
+    const firstIndexOfThePage = numberOfProductLimit * (page - 1);
+    const lastIndexOfThePage =
+      currentPage !== totalPage
+        ? numberOfProductLimit * page
+        : filteredProductList?.length;
+    const shownProduct = filteredProductList.slice(
+      firstIndexOfThePage,
+      lastIndexOfThePage,
+    );
+    setRenderedProductList(shownProduct);
+  };
+
   const initializeScreen = async () => {
-    const products = await fetchProductList();
+    // const products = await fetchProductList();
+    const products = [
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 1',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 2',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 3',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 4',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 5',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 6',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 7',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 8',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 9',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 10',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 11',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 12',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 10',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 9',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 8',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 7',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 6',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 5',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 4',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 3',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 2',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+      {
+        CategoryId: 14,
+        categoryName: 'Cemilan5',
+        sku: 'MHZVTK',
+        name: 'Delifer 13 1',
+        description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
+        weight: 500,
+        width: 5,
+        length: 5,
+        height: 5,
+        image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
+        harga: 40000,
+      },
+    ];
     setResponseProductList(products);
   };
 
   const isProductEmpty = () => {
-    return !productList?.length;
+    return !filteredProductList?.length;
   };
+
+  const isProductPageMoreThanOne = useCallback(() => {
+    return totalPage > 1;
+  }, [totalPage]);
 
   const AddProductButton = () => (
     <TouchableOpacity
@@ -115,30 +466,48 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     </TouchableOpacity>
   );
 
+  console.log(currentPage);
+
+  const RenderPageHandler = () =>
+    !isProductEmpty() && isProductPageMoreThanOne() ? (
+      <Wrapper style={styles.pageHandlerContainer}>
+        <Button title="<" onPress={goToPreviousPage} />
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text>{`${currentPage}/${totalPage}`}</Text>
+        </View>
+        <Button title=">" onPress={goToNextPage} />
+      </Wrapper>
+    ) : (
+      <></>
+    );
+
   const RenderEmptyList = () => (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+    <View style={styles.emptyContainer}>
       <Text style={styles.emptyHeadlineText}>The list is currently empty</Text>
       <Text style={styles.emptyTaglineText}>Please ADD new product</Text>
     </View>
   );
 
-  const RenderList = () => (
-    <ScrollView
-      style={styles.scrollContainer}
-      contentContainerStyle={styles.contentScrollContainer}>
-      {productList?.map(product => (
-        <>
-          <ProductCard key={product.id} product={product} />
-          <BoxSpace.B />
-        </>
-      ))}
-    </ScrollView>
-  );
+  const RenderList = () =>
+    useMemo(() => {
+      return (
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.contentScrollContainer}>
+          {renderedProductList?.map(product => (
+            <>
+              <ProductCard key={product.id} product={product} />
+              <BoxSpace.B />
+            </>
+          ))}
+        </ScrollView>
+      );
+    }, [JSON.stringify(renderedProductList)]);
 
   const RenderMainContainer = () => (
     <View style={{flex: 1}}>
@@ -148,14 +517,26 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
 
   useEffect(() => {
     if (searchInput) {
-      const filteredProductList = responseProductList.filter(product =>
+      const filteredProducts = responseProductList.filter(product =>
         product.name.toLowerCase().includes(searchInput.toLowerCase()),
       );
-      setProductList(filteredProductList);
+      setCurrentPage(1);
+      setFilteredProductList(filteredProducts);
     } else {
-      setProductList(responseProductList);
+      setFilteredProductList(responseProductList);
     }
   }, [responseProductList, searchInput]);
+
+  useEffect(() => {
+    handlePageProducts(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (filteredProductList?.length > 0) {
+      handlePageTotal(filteredProductList?.length);
+      handlePageProducts(currentPage);
+    }
+  }, [JSON.stringify(filteredProductList)]);
 
   useEffect(() => {
     initializeScreen();
@@ -174,6 +555,8 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
           style={styles.input}
         />
       </View>
+      <BoxSpace.B />
+      <RenderPageHandler />
       <BoxSpace.B />
       <RenderMainContainer />
     </Container>
