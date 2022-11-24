@@ -83,6 +83,11 @@ const styles = StyleSheet.create<HomeStyleInterface>({
 
 const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const [searchInput, setSearchInput] = useState('');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [errorResponse, setErrorResponse] = useState<any>();
+
   const [responseProductList, setResponseProductList] = useState<
     Array<ProductInterface>
   >([]);
@@ -101,20 +106,13 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const onPressAddProductButton = () => {
-    addProduct({
-      CategoryId: 14,
-      categoryName: 'Cemilan5',
-      sku: 'MHZVTK',
-      name: 'Delifer',
-      description: 'Ciki ciki yang super enak, hanya di toko klontong kami',
-      weight: 500,
-      width: 5,
-      length: 5,
-      height: 5,
-      image: 'https://cf.shopee.co.id/file/7cb930d1bd183a435f4fb3e5cc4a896b',
-      harga: 40000,
-    });
-    // navigation.navigate('AddProduct');
+    navigation.navigate('AddProduct');
+  };
+
+  const onPressErrorRetryButton = () => {
+    setIsError(false);
+    setIsLoading(true);
+    handleFetchingProductList();
   };
 
   const goToNextPage = () => {
@@ -157,9 +155,16 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     setRenderedProductList(shownProduct);
   };
 
-  const initializeScreen = async () => {
-    const products = await fetchProductList();
-    setResponseProductList(products);
+  const handleFetchingProductList = async () => {
+    try {
+      const products = await fetchProductList();
+      setResponseProductList(products);
+    } catch (error) {
+      setIsError(true);
+      setErrorResponse(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isProductEmpty = () => {
@@ -196,6 +201,22 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
       <></>
     );
 
+  const RenderErrorMessage = () => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyHeadlineText}>Error loading the data</Text>
+      <Text style={styles.emptyTaglineText}>{errorResponse?.message}</Text>
+      <BoxSpace.A />
+      <Button title="Retry" onPress={onPressErrorRetryButton} />
+    </View>
+  );
+
+  const RenderLoadingScreen = () => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyHeadlineText}>Loading data...</Text>
+      <Text style={styles.emptyTaglineText}>Please wait for a moment</Text>
+    </View>
+  );
+
   const RenderEmptyList = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyHeadlineText}>The list is currently empty</Text>
@@ -218,6 +239,18 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
         </ScrollView>
       );
     }, [JSON.stringify(renderedProductList)]);
+
+  const HandleRenderLoading = () => (
+    <View style={{flex: 1}}>
+      {isLoading ? <RenderLoadingScreen /> : <HandleRenderError />}
+    </View>
+  );
+
+  const HandleRenderError = () => (
+    <View style={{flex: 1}}>
+      {!isError ? <RenderMainContainer /> : <RenderErrorMessage />}
+    </View>
+  );
 
   const RenderMainContainer = () => (
     <View style={{flex: 1}}>
@@ -249,7 +282,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   }, [JSON.stringify(filteredProductList)]);
 
   useEffect(() => {
-    initializeScreen();
+    handleFetchingProductList();
   }, []);
 
   return (
@@ -268,7 +301,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
       <BoxSpace.B />
       <RenderPageHandler />
       <BoxSpace.B />
-      <RenderMainContainer />
+      <HandleRenderLoading />
     </Container>
   );
 };
