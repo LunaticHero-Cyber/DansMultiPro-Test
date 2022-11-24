@@ -178,8 +178,6 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     </TouchableOpacity>
   );
 
-  console.log(currentPage);
-
   const RenderPageHandler = () =>
     !isProductEmpty() && isProductPageMoreThanOne() ? (
       <Wrapper style={styles.pageHandlerContainer}>
@@ -213,7 +211,7 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
           contentContainerStyle={styles.contentScrollContainer}>
           {renderedProductList?.map(product => (
             <>
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.name} product={product} />
               <BoxSpace.B />
             </>
           ))}
