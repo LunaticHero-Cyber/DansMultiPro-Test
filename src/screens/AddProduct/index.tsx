@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,6 +17,7 @@ import {COLORS} from 'constants/colors';
 import {SIZES} from 'constants/sizes';
 import {addProduct} from 'services/post/addProduct';
 import {getRandomInt} from 'utils/common';
+import {useFocusEffect} from '@react-navigation/native';
 
 type OrderRequestDetailScreenProp = StackNavigationProp<
   StackParamList,
@@ -27,11 +28,14 @@ type HomeStyleInterface = {
   button: ViewStyle;
   activeButton: ViewStyle;
   disabledButton: ViewStyle;
+  messageContainer: ViewStyle;
   mainContainer: ViewStyle;
   input: ViewStyle;
   largeInput: ViewStyle;
   backButtonText: TextStyle;
   headlineText: TextStyle;
+  errorText: TextStyle;
+  successText: TextStyle;
 };
 
 const styles = StyleSheet.create<HomeStyleInterface>({
@@ -44,6 +48,9 @@ const styles = StyleSheet.create<HomeStyleInterface>({
   },
   disabledButton: {
     backgroundColor: COLORS.BLACK60,
+  },
+  messageContainer: {
+    padding: SIZES.small,
   },
   mainContainer: {
     flex: 1,
@@ -70,6 +77,14 @@ const styles = StyleSheet.create<HomeStyleInterface>({
     fontSize: SIZES.extraLarge,
     color: COLORS.BLACK100,
   },
+  errorText: {
+    fontSize: SIZES.large,
+    color: COLORS.RED,
+  },
+  successText: {
+    fontSize: SIZES.large,
+    color: COLORS.GREEN,
+  },
 });
 
 const AddProduct = ({
@@ -77,6 +92,12 @@ const AddProduct = ({
 }: {
   navigation: OrderRequestDetailScreenProp;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDoneMutating, setIsDoneMutating] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorResponse, setErrorResponse] = useState<any>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const [productName, setProductName] = useState('');
   const [categoryName, setCategoryName] = useState('');
   const [sku, setSku] = useState('');
@@ -92,25 +113,58 @@ const AddProduct = ({
     navigation.goBack();
   };
 
-  const BackButton = () => (
-    <TouchableOpacity
-      onPress={onPressAddProductButton}
-      style={[styles.button, styles.activeButton]}>
-      <Text style={styles.backButtonText}>Back</Text>
-    </TouchableOpacity>
-  );
+  const resetInputState = () => {
+    setProductName('');
+    setCategoryName('');
+    setSku('');
+    setDescription('');
+    setWeight('');
+    setWidth('');
+    setLength('');
+    setHeight('');
+    setImage('');
+    setPrice('');
+  };
 
-  const SubmitFormButton = () => (
-    <TouchableOpacity
-      onPress={onPressSubmitFormButton}
-      style={[
-        isAllFilled() ? styles.activeButton : styles.disabledButton,
-        styles.button,
-      ]}
-      disabled={!isAllFilled()}>
-      <Text style={styles.backButtonText}>Submit Form</Text>
-    </TouchableOpacity>
-  );
+  const onPressSubmitFormButton = async () => {
+    try {
+      setIsLoading(true);
+      //TODO: I think categoryId and id in general should be better handled in the BE in API Contract for now it will be "random"
+      //In this case I will make categoryId as "random", however the id itself is "Omit" from the ProductInterface as it's body JSON
+      const categoryId = getRandomInt(1000);
+      const newProduct = {
+        CategoryId: categoryId,
+        categoryName: categoryName,
+        sku: sku,
+        name: productName,
+        description: description,
+        weight: parseInt(weight, 10),
+        width: parseInt(width, 10),
+        length: parseInt(length, 10),
+        height: parseInt(height, 10),
+        image: image,
+        harga: parseInt(price, 10),
+      };
+
+      resetInputState();
+
+      await addProduct(newProduct);
+      setIsSuccess(true);
+    } catch (error) {
+      setIsError(true);
+      setErrorResponse(error);
+    } finally {
+      setIsLoading(false);
+      setIsDoneMutating(true);
+    }
+  };
+
+  const resetStatusState = () => {
+    setIsDoneMutating(false);
+    setIsError(false);
+    setIsLoading(false);
+    setIsSuccess(false);
+  };
 
   const isAllFilled = () =>
     productName &&
@@ -124,26 +178,54 @@ const AddProduct = ({
     image &&
     price;
 
-  const onPressSubmitFormButton = () => {
-    //TODO: I think categoryId and id in general should be better handled in the BE in API Contract for now it will be "random"
-    //In this case I will make categoryId as "random", however the id itself is "Omit" from the ProductInterface as it's body JSON
-    const categoryId = getRandomInt(1000);
-    const newProduct = {
-      CategoryId: categoryId,
-      categoryName: categoryName,
-      sku: sku,
-      name: productName,
-      description: description,
-      weight: parseInt(weight, 10),
-      width: parseInt(width, 10),
-      length: parseInt(length, 10),
-      height: parseInt(height, 10),
-      image: image,
-      harga: parseInt(price, 10),
-    };
+  const isButtonDisabled = () => !isAllFilled() || isLoading;
 
-    addProduct(newProduct);
-  };
+  const BackButton = () => (
+    <TouchableOpacity
+      onPress={onPressAddProductButton}
+      style={[styles.button, styles.activeButton]}>
+      <Text style={styles.backButtonText}>Back</Text>
+    </TouchableOpacity>
+  );
+
+  const SubmitFormButton = () => (
+    <TouchableOpacity
+      onPress={onPressSubmitFormButton}
+      style={[
+        isButtonDisabled() ? styles.disabledButton : styles.activeButton,
+        styles.button,
+      ]}
+      disabled={isButtonDisabled()}>
+      <Text style={styles.backButtonText}>Submit Form</Text>
+    </TouchableOpacity>
+  );
+
+  const RenderErrorMessage = () => (
+    <Text style={styles.errorText}>
+      Error submitting data due to {errorResponse?.message}
+    </Text>
+  );
+
+  const RenderSuccessMessage = () => (
+    <Text style={styles.successText}>Data has been successfully submitted</Text>
+  );
+
+  useEffect(() => {
+    if (isDoneMutating) {
+      resetStatusState();
+    }
+  }, [
+    productName,
+    categoryName,
+    sku,
+    description,
+    weight,
+    width,
+    length,
+    height,
+    image,
+    price,
+  ]);
 
   return (
     <Container>
@@ -153,6 +235,12 @@ const AddProduct = ({
         RenderAccessoryRight={SubmitFormButton}
       />
       <BoxSpace.C />
+      <View style={styles.messageContainer}>
+        {isDoneMutating && isSuccess && <RenderSuccessMessage />}
+        {isDoneMutating && isError && <RenderErrorMessage />}
+        {!isDoneMutating && <BoxSpace.C />}
+      </View>
+      <BoxSpace.A />
       <View style={styles.mainContainer}>
         <Text style={styles.headlineText}>
           Add new item by filling the form below
