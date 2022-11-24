@@ -10,6 +10,7 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import {useFocusEffect} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
@@ -19,7 +20,6 @@ import {Header, Container, BoxSpace, Wrapper} from 'components/Common';
 import {ProductCard} from 'components/Card';
 import {COLORS, SIZES} from 'constants';
 import {fetchProductList} from 'services/get/fetchProductList';
-import {addProduct} from 'services/post/addProduct';
 
 type OrderRequestDetailScreenProp = StackNavigationProp<
   StackParamList,
@@ -281,9 +281,11 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     }
   }, [JSON.stringify(filteredProductList)]);
 
-  useEffect(() => {
-    handleFetchingProductList();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      handleFetchingProductList();
+    }, []),
+  );
 
   return (
     <Container>

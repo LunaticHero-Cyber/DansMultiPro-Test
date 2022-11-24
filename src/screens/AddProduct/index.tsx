@@ -16,6 +16,7 @@ import {StackParamList} from '@navigators/Root';
 import {COLORS} from 'constants/colors';
 import {SIZES} from 'constants/sizes';
 import {addProduct} from 'services/post/addProduct';
+import {getRandomInt} from 'utils/common';
 
 type OrderRequestDetailScreenProp = StackNavigationProp<
   StackParamList,
@@ -126,7 +127,7 @@ const AddProduct = ({
   const onPressSubmitFormButton = () => {
     //TODO: I think categoryId and id in general should be better handled in the BE in API Contract for now it will be "random"
     //In this case I will make categoryId as "random", however the id itself is "Omit" from the ProductInterface as it's body JSON
-    const categoryId = new Date().valueOf();
+    const categoryId = getRandomInt(1000);
     const newProduct = {
       CategoryId: categoryId,
       categoryName: categoryName,
