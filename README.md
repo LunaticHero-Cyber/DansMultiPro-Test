@@ -20,6 +20,10 @@ Only tested in Android Emulator (Android 10.0) have not been tested in iOS as wi
 ## How to start development
 
 ```
+  yarn
+```
+
+```
   yarn android
 ```
 
