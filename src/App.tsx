@@ -13,9 +13,9 @@ import {StatusBar, useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 
-import RootNavigator from './src/navigators/Root';
-import {COLORS} from './src/constants';
-import {Store} from './src/reducer/store';
+import RootNavigator from './navigators/Root';
+import {COLORS} from './constants';
+import {Store} from './reducer/store';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
