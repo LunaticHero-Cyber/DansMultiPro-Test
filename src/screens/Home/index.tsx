@@ -83,24 +83,16 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const dispatch = useDispatch();
 
   const [searchInput, setSearchInput] = useState('');
+  const [page, setPage] = useState(1);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorResponse, setErrorResponse] = useState<any>();
 
   const [filteredJobList, setFilteredJobList] = useState<Array<JobInterface>>(
     [],
   );
-  const [renderedJobList, setRenderedJobList] = useState<Array<JobInterface>>(
-    [],
-  );
-
-  const totalNumberOfJobs = responseJobList?.length;
-  const numberOfJobLimit = 10;
-  const jobListHasRemainder = totalNumberOfJobs % numberOfJobLimit;
-
-  const [totalPage, setTotalPage] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const onPressErrorRetryButton = () => {
     setIsError(false);
@@ -108,49 +100,13 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     handleFetchingJobList();
   };
 
-  const goToNextPage = () => {
-    if (currentPage + 1 > totalPage) {
-      return;
-    }
-
-    setCurrentPage(currentPage + 1);
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage - 1 < 1) {
-      return;
-    }
-
-    setCurrentPage(currentPage - 1);
-  };
-
   const handleSearchInputChanged = (text: string) => {
     setSearchInput(text);
   };
 
-  const handlePageTotal = (numberOfJobs: number) => {
-    setTotalPage(
-      Math.floor(numberOfJobs / numberOfJobLimit) +
-        (jobListHasRemainder ? 1 : 0),
-    );
-  };
-
-  const handlePageJobs = (page: number) => {
-    const firstIndexOfThePage = numberOfJobLimit * (page - 1);
-    const lastIndexOfThePage =
-      currentPage !== totalPage
-        ? numberOfJobLimit * page
-        : filteredJobList?.length;
-    const shownJob = filteredJobList?.slice(
-      firstIndexOfThePage,
-      lastIndexOfThePage,
-    );
-    setRenderedJobList(shownJob);
-  };
-
   const handleFetchingJobList = async () => {
     try {
-      const jobs = await fetchJobsList();
+      const jobs = await fetchJobsList({page});
       dispatch(addJobList(jobs));
     } catch (error) {
       setIsError(true);
@@ -160,31 +116,24 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     }
   };
 
+  const onReachBottomPage = async () => {
+    try {
+      setIsFetching(true);
+      const jobs = await fetchJobsList({page: page + 1});
+      setPage(page + 1);
+      console.log(page);
+      dispatch(addJobList(jobs));
+    } catch (error) {
+      setIsError(true);
+      setErrorResponse(error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   const isJobEmpty = () => {
     return !filteredJobList?.length;
   };
-
-  const isJobPageMoreThanOne = useCallback(() => {
-    return totalPage > 1;
-  }, [totalPage]);
-
-  const RenderPageHandler = () =>
-    !isJobEmpty() && isJobPageMoreThanOne() ? (
-      <Wrapper style={styles.pageHandlerContainer}>
-        <Button title="<" onPress={goToPreviousPage} />
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text>{`${currentPage}/${totalPage}`}</Text>
-        </View>
-        <Button title=">" onPress={goToNextPage} />
-      </Wrapper>
-    ) : (
-      <></>
-    );
 
   const RenderErrorMessage = () => (
     <View style={styles.emptyContainer}>
@@ -222,14 +171,19 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const RenderList = () =>
     useMemo(() => {
       return (
-        <FlatList
-          style={styles.scrollContainer}
-          data={renderedJobList}
-          renderItem={RenderJob}
-          keyExtractor={item => item.id}
-        />
+        <>
+          <FlatList
+            style={styles.scrollContainer}
+            data={filteredJobList}
+            renderItem={RenderJob}
+            onEndReached={onReachBottomPage}
+            onEndReachedThreshold={0.1}
+            keyExtractor={item => item.id}
+          />
+          {isFetching && <Text>Fetching new job list</Text>}
+        </>
       );
-    }, [JSON.stringify(renderedJobList)]);
+    }, [JSON.stringify(filteredJobList)]);
 
   const HandleRenderLoading = () => (
     <View style={{flex: 1}}>
@@ -254,28 +208,17 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
       const filteredJobs = responseJobList?.filter(job =>
         job.description.toLowerCase().includes(searchInput.toLowerCase()),
       );
-      setCurrentPage(1);
       setFilteredJobList(filteredJobs);
     } else {
       setFilteredJobList(responseJobList);
     }
   }, [responseJobList, searchInput]);
 
-  useEffect(() => {
-    handlePageJobs(currentPage);
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (filteredJobList?.length > 0) {
-      handlePageTotal(filteredJobList?.length);
-      handlePageJobs(currentPage);
-    }
-  }, [JSON.stringify(filteredJobList)]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(emptyJobList());
       handleFetchingJobList();
+      setPage(1);
     }, []),
   );
 
@@ -292,8 +235,6 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
           style={styles.input}
         />
       </View>
-      <BoxSpace.B />
-      <RenderPageHandler />
       <BoxSpace.B />
       <HandleRenderLoading />
     </Container>
