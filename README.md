@@ -10,7 +10,7 @@ Build using React Native with TypeScript
 ## Platform of development
 **OS** Windows 10
 
-**React native version** 0.70.6 set up template using `npx react-native init AwesomeTSProject --template react-native-template-typescript`
+**React native version** 0.70.6 set up template using `npx react-native init {projectName} --template react-native-template-typescript`
 
 **Node Version** v16.13.0 
 
