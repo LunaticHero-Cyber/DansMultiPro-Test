@@ -1,4 +1,4 @@
-package com.klontongproject.newarchitecture;
+package com.testprojectdansmultipro.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.klontongproject.BuildConfig;
-import com.klontongproject.newarchitecture.components.MainComponentsRegistry;
-import com.klontongproject.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.testprojectdansmultipro.BuildConfig;
+import com.testprojectdansmultipro.newarchitecture.components.MainComponentsRegistry;
+import com.testprojectdansmultipro.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

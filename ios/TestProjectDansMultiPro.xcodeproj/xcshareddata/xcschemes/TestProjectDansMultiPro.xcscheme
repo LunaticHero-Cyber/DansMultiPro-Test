@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "KlontongProject.app"
-               BlueprintName = "KlontongProject"
-               ReferencedContainer = "container:KlontongProject.xcodeproj">
+               BuildableName = "TestProjectDansMultiPro.app"
+               BlueprintName = "TestProjectDansMultiPro"
+               ReferencedContainer = "container:TestProjectDansMultiPro.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "KlontongProjectTests.xctest"
-               BlueprintName = "KlontongProjectTests"
-               ReferencedContainer = "container:KlontongProject.xcodeproj">
+               BuildableName = "TestProjectDansMultiProTests.xctest"
+               BlueprintName = "TestProjectDansMultiProTests"
+               ReferencedContainer = "container:TestProjectDansMultiPro.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "KlontongProject.app"
-            BlueprintName = "KlontongProject"
-            ReferencedContainer = "container:KlontongProject.xcodeproj">
+            BuildableName = "TestProjectDansMultiPro.app"
+            BlueprintName = "TestProjectDansMultiPro"
+            ReferencedContainer = "container:TestProjectDansMultiPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "KlontongProject.app"
-            BlueprintName = "KlontongProject"
-            ReferencedContainer = "container:KlontongProject.xcodeproj">
+            BuildableName = "TestProjectDansMultiPro.app"
+            BlueprintName = "TestProjectDansMultiPro"
+            ReferencedContainer = "container:TestProjectDansMultiPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

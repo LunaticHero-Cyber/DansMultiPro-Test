@@ -1,4 +1,4 @@
-package com.klontongproject.newarchitecture.components;
+package com.testprojectdansmultipro.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
