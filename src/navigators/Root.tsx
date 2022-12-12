@@ -1,16 +1,14 @@
 import React from 'react';
 
 import {createStackNavigator} from '@react-navigation/stack';
-import {ProductInterface} from '@appTypes/product.type';
-import AddProduct from '../screens/AddProduct';
+import {JobInterface} from '@appTypes/job.type';
 import Home from '../screens/Home';
-import ProductDetail from '../screens/ProductDetail';
+import JobDetail from '../screens/JobDetail';
 
 export type StackParamList = {
   Home: undefined;
-  AddProduct: undefined;
-  ProductDetail: {
-    product: ProductInterface;
+  JobDetail: {
+    job: JobInterface;
   };
 };
 
@@ -25,14 +23,9 @@ const RootNavigator = () => {
         component={Home}
       />
       <RootStack.Screen
-        name="AddProduct"
+        name="JobDetail"
         options={{headerShown: false}}
-        component={AddProduct}
-      />
-      <RootStack.Screen
-        name="ProductDetail"
-        options={{headerShown: false}}
-        component={ProductDetail}
+        component={JobDetail}
       />
     </RootStack.Navigator>
   );

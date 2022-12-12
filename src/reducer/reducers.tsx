@@ -1,19 +1,19 @@
-import {ProductInterface} from '@appTypes/product.type';
+import {JobInterface} from '@appTypes/job.type';
 import {createSlice} from '@reduxjs/toolkit';
 
-const initialState: Array<ProductInterface> = [];
+const initialState: Array<JobInterface> = [];
 
-export const productListReducer = createSlice({
-  name: 'productList',
+export const jobListReducer = createSlice({
+  name: 'jobList',
   initialState: initialState,
   reducers: {
-    addProductList: (state, action) => {
+    addJobList: (state, action) => {
       return [...state, ...action.payload];
     },
-    emptyProductList: state => {
+    emptyJobList: state => {
       return [];
     },
   },
 });
 
-export const {addProductList, emptyProductList} = productListReducer.actions;
+export const {addJobList, emptyJobList} = jobListReducer.actions;

@@ -1,3 +1,3 @@
-const BASE_URL = 'https://crudcrud.com/api/3a65529bc4f94363a76e947ffa1ee11d';
+const BASE_URL = 'http://dev3.dansmultipro.co.id/api';
 
-export const HOST_PRODUCT_URL = `${BASE_URL}/product`;
+export const HOST_JOBS_URL = `${BASE_URL}/recruitment/positions.json`;

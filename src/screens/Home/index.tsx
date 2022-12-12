@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Button,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,35 +16,30 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {ProductInterface} from '@appTypes/product.type';
+import {JobInterface} from '@appTypes/job.type';
 import {StackParamList} from '@navigators/Root';
 import {Header, Container, BoxSpace, Wrapper} from 'components/Common';
-import {ProductCard} from 'components/Card';
+import {JobCard} from 'components/Card';
 import {COLORS, SIZES} from 'constants';
-import {fetchProductList} from 'services/get/fetchProductList';
-import {initializeProductList} from 'reducer/actions';
-import {addProductList, emptyProductList} from 'reducer/reducers';
+import {fetchJobsList} from 'services/get/fetchJobsList';
+import {addJobList, emptyJobList} from 'reducer/reducers';
 
-type OrderRequestDetailScreenProp = StackNavigationProp<
-  StackParamList,
-  'AddProduct'
->;
+type OrderRequestDetailScreenProp = StackNavigationProp<StackParamList, 'Home'>;
 
 type HomeStyleInterface = {
-  addProductButton: ViewStyle;
+  addJobButton: ViewStyle;
   inputContainer: ViewStyle;
   pageHandlerContainer: ViewStyle;
   emptyContainer: ViewStyle;
-  contentScrollContainer: ViewStyle;
   scrollContainer: ViewStyle;
   input: ViewStyle;
-  addProductButtonText: TextStyle;
+  addJobButtonText: TextStyle;
   emptyHeadlineText: TextStyle;
   emptyTaglineText: TextStyle;
 };
 
 const styles = StyleSheet.create<HomeStyleInterface>({
-  addProductButton: {
+  addJobButton: {
     borderRadius: SIZES.extraSmall,
     padding: SIZES.medium,
     backgroundColor: COLORS.BLUE,
@@ -59,11 +55,9 @@ const styles = StyleSheet.create<HomeStyleInterface>({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  contentScrollContainer: {
-    padding: SIZES.small,
-  },
   scrollContainer: {
     flex: 1,
+    padding: SIZES.small,
   },
   input: {
     borderRadius: SIZES.extraSmall,
@@ -71,7 +65,7 @@ const styles = StyleSheet.create<HomeStyleInterface>({
     backgroundColor: COLORS.BLACK10,
     padding: SIZES.medium,
   },
-  addProductButtonText: {
+  addJobButtonText: {
     color: COLORS.WHITE,
   },
   emptyHeadlineText: {
@@ -85,7 +79,7 @@ const styles = StyleSheet.create<HomeStyleInterface>({
 });
 
 const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
-  const responseProductList = useSelector(state => state.productList);
+  const responseJobList = useSelector(state => state.jobList);
   const dispatch = useDispatch();
 
   const [searchInput, setSearchInput] = useState('');
@@ -94,28 +88,24 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const [isError, setIsError] = useState(false);
   const [errorResponse, setErrorResponse] = useState<any>();
 
-  const [filteredProductList, setFilteredProductList] = useState<
-    Array<ProductInterface>
-  >([]);
-  const [renderedProductList, setRenderedProductList] = useState<
-    Array<ProductInterface>
-  >([]);
+  const [filteredJobList, setFilteredJobList] = useState<Array<JobInterface>>(
+    [],
+  );
+  const [renderedJobList, setRenderedJobList] = useState<Array<JobInterface>>(
+    [],
+  );
 
-  const totalNumberOfProducts = responseProductList?.length;
-  const numberOfProductLimit = 10;
-  const productListHasRemainder = totalNumberOfProducts % numberOfProductLimit;
+  const totalNumberOfJobs = responseJobList?.length;
+  const numberOfJobLimit = 10;
+  const jobListHasRemainder = totalNumberOfJobs % numberOfJobLimit;
 
   const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const onPressAddProductButton = () => {
-    navigation.navigate('AddProduct');
-  };
-
   const onPressErrorRetryButton = () => {
     setIsError(false);
     setIsLoading(true);
-    handleFetchingProductList();
+    handleFetchingJobList();
   };
 
   const goToNextPage = () => {
@@ -138,30 +128,30 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     setSearchInput(text);
   };
 
-  const handlePageTotal = (numberOfProducts: number) => {
+  const handlePageTotal = (numberOfJobs: number) => {
     setTotalPage(
-      Math.floor(numberOfProducts / numberOfProductLimit) +
-        (productListHasRemainder ? 1 : 0),
+      Math.floor(numberOfJobs / numberOfJobLimit) +
+        (jobListHasRemainder ? 1 : 0),
     );
   };
 
-  const handlePageProducts = (page: number) => {
-    const firstIndexOfThePage = numberOfProductLimit * (page - 1);
+  const handlePageJobs = (page: number) => {
+    const firstIndexOfThePage = numberOfJobLimit * (page - 1);
     const lastIndexOfThePage =
       currentPage !== totalPage
-        ? numberOfProductLimit * page
-        : filteredProductList?.length;
-    const shownProduct = filteredProductList?.slice(
+        ? numberOfJobLimit * page
+        : filteredJobList?.length;
+    const shownJob = filteredJobList?.slice(
       firstIndexOfThePage,
       lastIndexOfThePage,
     );
-    setRenderedProductList(shownProduct);
+    setRenderedJobList(shownJob);
   };
 
-  const handleFetchingProductList = async () => {
+  const handleFetchingJobList = async () => {
     try {
-      const products = await fetchProductList();
-      dispatch(addProductList(products));
+      const jobs = await fetchJobsList();
+      dispatch(addJobList(jobs));
     } catch (error) {
       setIsError(true);
       setErrorResponse(error);
@@ -170,24 +160,16 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
     }
   };
 
-  const isProductEmpty = () => {
-    return !filteredProductList?.length;
+  const isJobEmpty = () => {
+    return !filteredJobList?.length;
   };
 
-  const isProductPageMoreThanOne = useCallback(() => {
+  const isJobPageMoreThanOne = useCallback(() => {
     return totalPage > 1;
   }, [totalPage]);
 
-  const AddProductButton = () => (
-    <TouchableOpacity
-      onPress={onPressAddProductButton}
-      style={styles.addProductButton}>
-      <Text style={styles.addProductButtonText}>Add Product</Text>
-    </TouchableOpacity>
-  );
-
   const RenderPageHandler = () =>
-    !isProductEmpty() && isProductPageMoreThanOne() ? (
+    !isJobEmpty() && isJobPageMoreThanOne() ? (
       <Wrapper style={styles.pageHandlerContainer}>
         <Button title="<" onPress={goToPreviousPage} />
         <View
@@ -223,26 +205,31 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
   const RenderEmptyList = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyHeadlineText}>The list is currently empty</Text>
-      <Text style={styles.emptyTaglineText}>Please ADD new product</Text>
+      <Text style={styles.emptyTaglineText}>Please ADD new job</Text>
     </View>
   );
+
+  const RenderJob = ({item}: {item: JobInterface}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('JobDetail', {job: item})}>
+        <JobCard key={item.id} job={item} />
+        <BoxSpace.B />
+      </TouchableOpacity>
+    );
+  };
 
   const RenderList = () =>
     useMemo(() => {
       return (
-        <ScrollView
+        <FlatList
           style={styles.scrollContainer}
-          contentContainerStyle={styles.contentScrollContainer}>
-          {renderedProductList?.map(product => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ProductDetail', {product})}>
-              <ProductCard key={product.name} product={product} />
-              <BoxSpace.B />
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          data={renderedJobList}
+          renderItem={RenderJob}
+          keyExtractor={item => item.id}
+        />
       );
-    }, [JSON.stringify(renderedProductList)]);
+    }, [JSON.stringify(renderedJobList)]);
 
   const HandleRenderLoading = () => (
     <View style={{flex: 1}}>
@@ -258,50 +245,50 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
 
   const RenderMainContainer = () => (
     <View style={{flex: 1}}>
-      {isProductEmpty() ? <RenderEmptyList /> : <RenderList />}
+      {isJobEmpty() ? <RenderEmptyList /> : <RenderList />}
     </View>
   );
 
   useEffect(() => {
     if (searchInput) {
-      const filteredProducts = responseProductList?.filter(product =>
-        product.name.toLowerCase().includes(searchInput.toLowerCase()),
+      const filteredJobs = responseJobList?.filter(job =>
+        job.description.toLowerCase().includes(searchInput.toLowerCase()),
       );
       setCurrentPage(1);
-      setFilteredProductList(filteredProducts);
+      setFilteredJobList(filteredJobs);
     } else {
-      setFilteredProductList(responseProductList);
+      setFilteredJobList(responseJobList);
     }
-  }, [responseProductList, searchInput]);
+  }, [responseJobList, searchInput]);
 
   useEffect(() => {
-    handlePageProducts(currentPage);
+    handlePageJobs(currentPage);
   }, [currentPage]);
 
   useEffect(() => {
-    if (filteredProductList?.length > 0) {
-      handlePageTotal(filteredProductList?.length);
-      handlePageProducts(currentPage);
+    if (filteredJobList?.length > 0) {
+      handlePageTotal(filteredJobList?.length);
+      handlePageJobs(currentPage);
     }
-  }, [JSON.stringify(filteredProductList)]);
+  }, [JSON.stringify(filteredJobList)]);
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(emptyProductList());
-      handleFetchingProductList();
+      dispatch(emptyJobList());
+      handleFetchingJobList();
     }, []),
   );
 
   return (
     <Container>
-      <Header title="Home" RenderAccessoryRight={AddProductButton} />
+      <Header title="Home" />
       <BoxSpace.B />
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Search by product name"
+          placeholder="Search by job name"
           value={searchInput}
           onChangeText={handleSearchInputChanged}
-          editable={!isProductEmpty()}
+          editable={!isJobEmpty()}
           style={styles.input}
         />
       </View>
