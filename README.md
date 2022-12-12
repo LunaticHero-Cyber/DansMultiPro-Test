@@ -1,4 +1,4 @@
-# Test Klontong App Project
+# Test Dans Multi Pro
 
 Build using React Native with TypeScript
 
@@ -13,10 +13,6 @@ Build using React Native with TypeScript
 **React native version** 0.70.6 set up template using `npx react-native init {projectName} --template react-native-template-typescript`
 
 **Node Version** v16.13.0 
-
-## Current limitation
-- Only tested in Android Emulator (Android 10.0) have not been tested in iOS as windows cannot run `pod install` unfortunately
-- **State presistence** is still a new topic for me I would need to learn more on how to implement it properly
 
 ## How to start development
 
