@@ -1,6 +1,7 @@
 import {SIZES} from 'constants/sizes';
 import React, {ReactNode} from 'react';
 import {Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {Wrapper} from '../../components/Common';
 import {COLORS} from '../../constants';
@@ -17,22 +18,24 @@ export const Header: React.FC<Props> = props => {
   const {title, RenderAccessoryLeft, RenderAccessoryRight, children} = props;
 
   return (
-    <Wrapper
-      style={{
-        backgroundColor: COLORS.BLACK20,
-        alignItems: 'center',
-        padding: SIZES.small,
-      }}>
-      <View style={{flex: 1, alignItems: 'flex-start'}}>
-        {RenderAccessoryLeft ? <RenderAccessoryLeft /> : <></>}
-      </View>
-      <View style={{flex: 1, alignItems: 'center'}}>
-        {children || <Text>{title}</Text>}
-      </View>
-      <View style={{flex: 1, alignItems: 'flex-end'}}>
-        {RenderAccessoryRight ? <RenderAccessoryRight /> : <></>}
-      </View>
-    </Wrapper>
+    <SafeAreaView>
+      <Wrapper
+        style={{
+          backgroundColor: COLORS.BLACK20,
+          alignItems: 'center',
+          padding: SIZES.small,
+        }}>
+        <View style={{flex: 1, alignItems: 'flex-start'}}>
+          {RenderAccessoryLeft ? <RenderAccessoryLeft /> : <></>}
+        </View>
+        <View style={{flex: 1, alignItems: 'center'}}>
+          {children || <Text>{title}</Text>}
+        </View>
+        <View style={{flex: 1, alignItems: 'flex-end'}}>
+          {RenderAccessoryRight ? <RenderAccessoryRight /> : <></>}
+        </View>
+      </Wrapper>
+    </SafeAreaView>
   );
 };
 
