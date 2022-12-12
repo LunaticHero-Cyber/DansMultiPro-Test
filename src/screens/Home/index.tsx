@@ -121,7 +121,6 @@ const Home = ({navigation}: {navigation: OrderRequestDetailScreenProp}) => {
       setIsFetching(true);
       const jobs = await fetchJobsList({page: page + 1});
       setPage(page + 1);
-      console.log(page);
       dispatch(addJobList(jobs));
     } catch (error) {
       setIsError(true);
